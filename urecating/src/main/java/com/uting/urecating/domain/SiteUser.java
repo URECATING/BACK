@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Entity
 @Setter @Getter
 @Table(name="user")
-public class SiteUser {
+public class SiteUser extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
@@ -36,22 +36,5 @@ public class SiteUser {
 
     @Column(nullable = false)
     private String gender; //회원 성별
-
-    @Column(name = "created_at")
-    private LocalDateTime createdAt; //생성날짜
-
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt; //수정날짜
-
-    @PrePersist
-    public void prePersist(){
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = this.createdAt;
-    }
-
-    @PreUpdate
-    public void onPreUpdate(){
-        this.updatedAt = LocalDateTime.now();
-    }
 
 }
