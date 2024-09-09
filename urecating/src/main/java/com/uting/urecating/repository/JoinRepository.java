@@ -2,7 +2,6 @@ package com.uting.urecating.repository;
 
 
 import com.uting.urecating.domain.Join;
-import com.uting.urecating.domain.LikePost;
 import com.uting.urecating.domain.SiteUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 

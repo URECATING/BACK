@@ -4,8 +4,6 @@ package com.uting.urecating.domain;
 import jakarta.persistence.*;
 import lombok.Getter;
 
-import java.time.LocalDateTime;
-
 @Entity
 @Getter
 public class Join extends BaseEntity{
