@@ -1,5 +1,10 @@
 package com.uting.urecating.controller;
 
+import com.uting.urecating.config.exception.ApiException;
+import com.uting.urecating.config.exception.ErrorCode;
+import com.uting.urecating.config.response.ApiResponse;
+
+import com.uting.urecating.config.response.ResponseCode;
 import com.uting.urecating.domain.SiteUser;
 import com.uting.urecating.dto.UserJoinDto;
 import com.uting.urecating.dto.UserLoginDto;
@@ -26,53 +31,32 @@ public class UserController {
 
     // 회원가입
     @PostMapping("/join")
-    public ResponseEntity<Map<String, Object>> join(@Valid @RequestBody UserJoinDto user, BindingResult bindingResult) {
+    public ResponseEntity<ApiResponse<SiteUser>> join(@Valid @RequestBody UserJoinDto user, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            Map<String, String> errorMessages = new HashMap<>();
-
-            bindingResult.getFieldErrors().forEach(fieldError -> {
-                String fieldName = fieldError.getField();
-                String errorMessage = fieldError.getDefaultMessage();
-
-                errorMessages.put(fieldName, errorMessage);
-            });
-            return ResponseEntity.badRequest().body(Map.of("errors", errorMessages.toString()));
+            throw new ApiException(ErrorCode.JOIN_DATA_ERROR);
         }
-
         try {
             SiteUser newUser = userService.join(user.getUserName(), user.getLogin(),
                     user.getPassword(), user.getTeam(), user.getGender(), user.getPhone());
 
-            Map<String, Object> response = new HashMap<>();
-            response.put("message", "회원가입 성공");
-            response.put("user", newUser);
+            ApiResponse<SiteUser> response = new ApiResponse<>(ResponseCode.SUCCESS_INSERT, newUser);
+            return ResponseEntity.status(response.getStatus()).body(response);
 
-            return ResponseEntity.ok(response);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(Collections.singletonMap("login", e.getMessage()));
+            throw new ApiException(ErrorCode.JOIN_DUPLI_ERROR);
         }
     }
-    //회원가입
-/*    @PostMapping("/join")
-    public ResponseEntity<ApiResponse<SiteUser>> join(@RequestBody UserJoinDto user) {
-        SiteUser siteUser =  userService.join(user.getUserName(), user.getLogin(),
-                user.getPassword(), user.getTeam(), user.getGender(), user.getPhone());
-        ApiResponse<SiteUser> response = new ApiResponse<>(ResponseCode.SUCCESS_INSERT, siteUser);
-        return ResponseEntity.status(response.getStatus()).body(response);
-    }*/
 
 
     // 로그인
     @PostMapping("/login")
-    public ResponseEntity<Map<String, Object>> login(@RequestBody UserLoginDto userLoginDto) {
+    public ResponseEntity<ApiResponse<SiteUser>>  login(@RequestBody UserLoginDto userLoginDto) {
         try {
             SiteUser user = userService.login(userLoginDto.getLogin(), userLoginDto.getPassword());
-            Map<String, Object> response = new HashMap<>();
-            response.put("message", "로그인 성공");
-            response.put("user", user);
-            return ResponseEntity.ok(response);
+            ApiResponse<SiteUser> response = new ApiResponse<>(ResponseCode.SUCCESS_SEARCH, user);
+            return ResponseEntity.status(response.getStatus()).body(response);
         } catch (RuntimeException e) {
-            return ResponseEntity.status(401).body(Collections.singletonMap("error", e.getMessage()));
+            throw new ApiException(ErrorCode.SEARCH_ERROR);
         }
     }
 
@@ -81,9 +65,10 @@ public class UserController {
     public ResponseEntity<?> getMyPage(@PathVariable("id") Long id) {
         try {
             SiteUser user = userService.getUserById(id);
-            return ResponseEntity.ok(user);
+            ApiResponse<SiteUser> response = new ApiResponse<>(ResponseCode.SUCCESS_SEARCH, user);
+            return ResponseEntity.status(response.getStatus()).body(response);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.notFound().build(); // 사용자 없음
+            throw new ApiException(ErrorCode.SEARCH_ERROR); // 사용자 없음
         }
     }
 
@@ -93,13 +78,10 @@ public class UserController {
         try {
             SiteUser updatedUser = userService.updateUser(id, updateDto);
 
-            Map<String, Object> response = new HashMap<>();
-            response.put("message", "정보수정 성공");
-            response.put("user", updatedUser);
-
-            return ResponseEntity.ok(response);
+            ApiResponse<SiteUser> response = new ApiResponse<>(ResponseCode.SUCCESS_UPDATE, updatedUser);
+            return ResponseEntity.status(response.getStatus()).body(response);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.notFound().build(); // 사용자 없음
+            throw new ApiException(ErrorCode.SEARCH_ERROR); // 사용자 없음
         }
     }
 }
