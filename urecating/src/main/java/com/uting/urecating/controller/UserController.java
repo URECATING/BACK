@@ -20,6 +20,15 @@ public class UserController {
         return userService.join(user.getUserName(), user.getLogin(),
                 user.getPassword(), user.getTeam(), user.getGender(), user.getPhone());
     }
+    //회원가입
+/*    @PostMapping("/join")
+    public ResponseEntity<ApiResponse<SiteUser>> join(@RequestBody UserJoinDto user) {
+        SiteUser siteUser =  userService.join(user.getUserName(), user.getLogin(),
+                user.getPassword(), user.getTeam(), user.getGender(), user.getPhone());
+        ApiResponse<SiteUser> response = new ApiResponse<>(ResponseCode.SUCCESS_INSERT, siteUser);
+        return ResponseEntity.status(response.getStatus()).body(response);
+    }*/
+
 
     //로그인
     @PostMapping("/login")
