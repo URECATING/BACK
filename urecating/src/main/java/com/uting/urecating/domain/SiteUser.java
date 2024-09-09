@@ -1,19 +1,20 @@
 package com.uting.urecating.domain;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Setter @Getter
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Table(name="user")
 public class SiteUser extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
-
     private Long id;
 
     @Column(unique = true, nullable = false)
