@@ -5,7 +5,7 @@ import lombok.Getter;
 @Getter
 public class ApiResponse <T>{
     private int status;
-    private String code;
+    private int code;
     private String message;
     private String description;
     private T data;
@@ -19,7 +19,10 @@ public class ApiResponse <T>{
         this.data = data;
     }
 
-    public ApiResponse(ResponseCode responseCode) {
-        this(responseCode, null);  // 데이터를 null로 처리
+    public ApiResponse(int status, String message) {
+        this.status = status;
+        this.message = message;
+        this.description = message;
+        this.code = status;
     }
 }
