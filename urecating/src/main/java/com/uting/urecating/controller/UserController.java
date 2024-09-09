@@ -4,10 +4,15 @@ import com.uting.urecating.domain.SiteUser;
 import com.uting.urecating.dto.UserJoinDto;
 import com.uting.urecating.dto.UserLoginDto;
 import com.uting.urecating.dto.UserUpdateDto;
+import com.uting.urecating.jwt.TokenProvider;
 import com.uting.urecating.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -23,6 +28,8 @@ import java.util.Collections;
 public class UserController {
 
     private final UserService userService;
+    private final TokenProvider tokenProvider;
+    private final AuthenticationManager authenticationManager;
 
     // 회원가입
     @PostMapping("/join")
@@ -57,15 +64,37 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> login(@RequestBody UserLoginDto userLoginDto) {
         try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(userLoginDto.getLogin(), userLoginDto.getPassword())
+            );
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            //JWT생성
+            String token = tokenProvider.createToken(authentication);
+
             SiteUser user = userService.login(userLoginDto.getLogin(), userLoginDto.getPassword());
             Map<String, Object> response = new HashMap<>();
             response.put("message", "로그인 성공");
             response.put("user", user);
+            response.put("token", token);
+
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
             return ResponseEntity.status(401).body(Collections.singletonMap("error", e.getMessage()));
         }
     }
+//    @PostMapping("/login")
+//    public ResponseEntity<Map<String, Object>> login(@RequestBody UserLoginDto userLoginDto) {
+//        try {
+//            SiteUser user = userService.login(userLoginDto.getLogin(), userLoginDto.getPassword());
+//            Map<String, Object> response = new HashMap<>();
+//            response.put("message", "로그인 성공");
+//            response.put("user", user);
+//            return ResponseEntity.ok(response);
+//        } catch (RuntimeException e) {
+//            return ResponseEntity.status(401).body(Collections.singletonMap("error", e.getMessage()));
+//        }
+//    }
 
     // 마이페이지 조회
     @GetMapping("/{id}/mypage")

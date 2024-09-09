@@ -2,8 +2,11 @@ package com.uting.urecating.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -37,5 +40,4 @@ public class SiteUser extends BaseEntity{
 
     @Column(nullable = false)
     private String gender; //회원 성별
-
 }
