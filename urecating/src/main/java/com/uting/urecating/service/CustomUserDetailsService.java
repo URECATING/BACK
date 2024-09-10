@@ -12,11 +12,12 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Component
+@Service
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
 
@@ -24,20 +25,19 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        // 사용자 정보를 가져옵니다.
         SiteUser siteUser = userRepository.findByLogin(username)
-                .orElseThrow(() -> new UsernameNotFoundException("유저정보가 없습니다."));
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-        // 권한 정보 설정 (여기서는 예시로 빈 권한을 설정합니다. 필요에 따라 수정하세요.)
-        List<GrantedAuthority> grantedAuthorities = Collections.emptyList();
+        List<GrantedAuthority> authorities = Arrays.asList(new SimpleGrantedAuthority("ROLE_USER")); // 권한 예시
 
         return User.builder()
                 .username(siteUser.getLogin())
                 .password(siteUser.getPassword())
-                .authorities(grantedAuthorities)
+                .authorities(authorities)
                 .build();
     }
 }
+
 
 
 

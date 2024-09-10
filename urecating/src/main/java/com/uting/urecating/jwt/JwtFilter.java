@@ -13,6 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.GenericFilterBean;
+import org.springframework.web.util.ContentCachingRequestWrapper;
 
 import java.io.IOException;
 
@@ -35,19 +36,36 @@ public class JwtFilter extends GenericFilterBean {
             logger.debug("Security Context에 '{}' 인증 정보를 저장했습니다, uri: {}", authentication.getName(), requestURI);
         } else {
             logger.debug("유효한 JWT 토큰이 없습니다, uri: {}", requestURI);
+            if (jwt == null) {
+                logger.debug("JWT가 요청에 포함되지 않았습니다.");
+            } else {
+                logger.debug("토큰 검증 실패: {}", jwt);
+            }
         }
 
         filterChain.doFilter(servletRequest, servletResponse);
     }
 
-    private String resolveToken(HttpServletRequest request) {
-        String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
 
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7);
+//    private String resolveToken(HttpServletRequest request) {
+//        String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
+//
+//        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
+//            return bearerToken.substring(7);
+//        }
+//
+//        return null;
+//    }
+
+    public String resolveToken(HttpServletRequest request) {
+        ContentCachingRequestWrapper wrappedRequest = new ContentCachingRequestWrapper(
+                request
+        );
+        String token = wrappedRequest.getHeader("Authorization");
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7);
         }
-
-        return null;
+        return token;
     }
 }
 
