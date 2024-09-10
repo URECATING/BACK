@@ -2,8 +2,13 @@ package com.uting.urecating.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -38,4 +43,8 @@ public class SiteUser extends BaseEntity{
     @Column(nullable = false)
     private String gender; //회원 성별
 
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        // 실제 권한 리스트를 반환해야 합니다.
+        return Arrays.asList(new SimpleGrantedAuthority("ROLE_USER")); // 예시
+    }
 }

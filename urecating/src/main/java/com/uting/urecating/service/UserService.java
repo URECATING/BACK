@@ -35,11 +35,11 @@ public class UserService {
     }
 
     // 로그인
-    public SiteUser login(String login, String password){
+    public SiteUser login(String login, String password) {
         SiteUser user = userRepository.findByLogin(login)
                 .orElseThrow(() -> new RuntimeException("아이디가 존재하지 않습니다."));
 
-        if(!passwordEncoder.matches(password, user.getPassword())){
+        if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
 
