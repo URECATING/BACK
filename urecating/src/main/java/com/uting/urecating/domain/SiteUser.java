@@ -44,7 +44,6 @@ public class SiteUser extends BaseEntity{
     private String gender; //회원 성별
 
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // 실제 권한 리스트를 반환해야 합니다.
-        return Arrays.asList(new SimpleGrantedAuthority("ROLE_USER")); // 예시
+        return Arrays.asList(new SimpleGrantedAuthority("USER")); // 예시
     }
 }
