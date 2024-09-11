@@ -58,9 +58,7 @@ public class JwtFilter extends GenericFilterBean {
 //    }
 
     public String resolveToken(HttpServletRequest request) {
-        ContentCachingRequestWrapper wrappedRequest = new ContentCachingRequestWrapper(
-                request
-        );
+        ContentCachingRequestWrapper wrappedRequest = new ContentCachingRequestWrapper(request);
         String token = wrappedRequest.getHeader("Authorization");
         if (token != null && token.startsWith("Bearer ")) {
             token = token.substring(7);

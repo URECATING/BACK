@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Collections;
@@ -75,7 +76,6 @@ public class UserController {
             SiteUser user = userService.login(userLoginDto.getLogin(), userLoginDto.getPassword());
             Map<String, Object> response = new HashMap<>();
             response.put("message", "로그인 성공");
-            response.put("user", user);
             response.put("token", token);
 
             return ResponseEntity.ok(response);
@@ -108,18 +108,37 @@ public class UserController {
     }
 
     // 마이페이지 UPDATE
-    @PatchMapping("/{id}/mypage")
-    public ResponseEntity<?> updateMyPage(@PathVariable("id") Long id, @RequestBody UserUpdateDto updateDto) {
-        try {
-            SiteUser updatedUser = userService.updateUser(id, updateDto);
+    @PatchMapping("/mypage")
+    public ResponseEntity<?> updateMyPage(
+            @RequestHeader(value = "Authorization", required = false) String tokenInfo,
+            @RequestBody UserUpdateDto updateDto) {
 
-            Map<String, Object> response = new HashMap<>();
-            response.put("message", "정보수정 성공");
-            response.put("user", updatedUser);
+        // 토큰에서 로그인 ID 추출
+        String userLogin = tokenProvider.getUserLoginToken(tokenInfo);
 
-            return ResponseEntity.ok(response);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.notFound().build(); // 사용자 없음
-        }
+        // 유저 정보 업데이트
+        SiteUser updatedUser = userService.updateUser(userLogin, updateDto);
+
+        // 성공 메시지 및 업데이트된 유저 정보 반환
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "마이페이지 정보가 성공적으로 수정되었습니다.");
+        response.put("user", updatedUser);
+
+        return ResponseEntity.ok(response);
     }
+
+//    @PatchMapping("/{id}/mypage")
+//    public ResponseEntity<?> updateMyPage(@PathVariable("id") Long id, @RequestBody UserUpdateDto updateDto) {
+//        try {
+//            SiteUser updatedUser = userService.updateUser(id, updateDto);
+//
+//            Map<String, Object> response = new HashMap<>();
+//            response.put("message", "정보수정 성공");
+//            response.put("user", updatedUser);
+//
+//            return ResponseEntity.ok(response);
+//        } catch (IllegalArgumentException e) {
+//            return ResponseEntity.notFound().build(); // 사용자 없음
+//        }
+//    }
 }
