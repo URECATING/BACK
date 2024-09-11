@@ -98,4 +98,15 @@ public class TokenProvider implements InitializingBean {
         }
         return false;
     }
+
+    //토큰에서 유저 아이디 추출
+    public String getUserLoginToken(String token){
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+        return claims.getSubject();
+    }
+
 }
