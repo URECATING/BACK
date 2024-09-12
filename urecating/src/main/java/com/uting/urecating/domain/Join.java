@@ -6,6 +6,7 @@ import lombok.Getter;
 
 @Entity
 @Getter
+@Table(name="user_join")
 public class Join extends BaseEntity{
 
     @Id
