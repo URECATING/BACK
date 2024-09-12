@@ -5,12 +5,12 @@ import lombok.Getter;
 
 @Getter
 public enum ResponseCode {
-    SUCCESS_REQUEST(200, 201, "데이터 처리 성공", "정상처리"),
-    SUCCESS_SEARCH(200, 202, "데이터 조회 성공", "정상처리"),
-    SUCCESS_INSERT(200, 203, "데이터 입력 성공", "정상처리"),
-    SUCCESS_UPDATE(200, 204, "데이터 수정 성공", "정상처리"),
-    SUCCESS_LIKE(200, 205, "좋아요 성공", "정상처리"),
-    SUCCESS_JOIN(200, 206, "참여 성공", "정상처리");
+    SUCCESS_JOIN(200, 201, "회원 가입 성공", "정상처리"),
+    SUCCESS_LOGIN(200, 202, "로그인 성공", "정상처리"),
+    SUCCESS_SEARCH_MYPAGE(200, 203, "마이페이지 조회 성공", "정상처리"),
+    SUCCESS_UPDATE_MYPAGE(200, 204, "마이페이지 수정 성공", "정상처리"),
+    SUCCESS_LIKE(200, 205, "좋아요 성공", "정상처리");
+
 
     private final int status;
     private final int code;

@@ -10,6 +10,7 @@ public class ApiResponse<T> {
         private String message;
         private String description;
         private T data;
+        private String token;
 
         @Builder
         public ApiResponse(ResponseCode responseCode, T data) {
@@ -17,6 +18,14 @@ public class ApiResponse<T> {
             this.code = responseCode.getCode();
             this.message = responseCode.getMessage();
             this.description = responseCode.getDescription();
+            this.data = data;
+        }
+        public ApiResponse(ResponseCode responseCode, T data, String token ) {
+            this.status = responseCode.getStatus();
+            this.code = responseCode.getCode();
+            this.message = responseCode.getMessage();
+            this.description = responseCode.getDescription();
+            this.token = token;
             this.data = data;
         }
 
