@@ -51,6 +51,9 @@ dependencies {
     //Servlet
     implementation 'javax.servlet:javax.servlet-api:4.0.1'
 
+	//AWS
+	implementation "com.amazonaws:aws-java-sdk-s3:1.12.281"
+
 }
 
 

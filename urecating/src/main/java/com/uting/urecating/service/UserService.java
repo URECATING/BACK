@@ -3,6 +3,7 @@ package com.uting.urecating.service;
 import com.uting.urecating.domain.SiteUser;
 import com.uting.urecating.dto.UserUpdateDto;
 import com.uting.urecating.repository.UserRepository;
+import com.uting.urecating.s3.S3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final S3Service s3Service;
 
     // 회원가입
     public SiteUser join(String userName, String login, String password,
@@ -53,12 +55,16 @@ public class UserService {
     }
 
     //마이페이지 수정 - 이미지, 비밀번호, 전화번호
-    public SiteUser updateUser(String login, UserUpdateDto updateDto) {
+    public SiteUser updateUser(String login, String password, String phone, String imageUrl) {
         SiteUser user = userRepository.findByLogin(login)
                 .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다"));
 
-        String updatedPassword = updateDto.getPassword() !=null ?
-                passwordEncoder.encode(updateDto.getPassword()) : user.getPassword();
+        //이미지 수정 시 기존 이미지 S3에서 삭제
+        if(imageUrl != null && user.getImage()!=null){
+            s3Service.delete(user.getImage());
+        }
+
+        String updatedPassword = password != null ? passwordEncoder.encode(password) : user.getPassword();
 
         SiteUser updatedUser = SiteUser.builder()
                 .id(user.getId())
@@ -66,10 +72,11 @@ public class UserService {
                 .userName(user.getUserName())
                 .team(user.getTeam())
                 .gender(user.getGender())
-                .phone(updateDto.getPhone() != null ? updateDto.getPhone() : user.getPhone())
+                .phone(phone != null ? phone : user.getPhone())
                 .password(updatedPassword)
-                .image(updateDto.getImage() != null ? updateDto.getImage() : user.getImage())
+                .image(imageUrl != null ? imageUrl : user.getImage())
                 .build();
+
         return userRepository.save(updatedUser);
     }
 }
