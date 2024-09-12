@@ -1,10 +1,10 @@
 package com.uting.urecating.domain;
 
 public enum Category {
-    LUNCH, // 점심
-    STUDY, // 스터디
-    GAME, // 게임
-    EXERCISE, // 운동
-    IMPROMPTU, // 번개
-    ETC //기타
+    점심, // 점심
+    스터디, // 스터디
+    게임, // 게임
+    운동, // 운동
+    번개, // 번개
+    기타 //기타
 }

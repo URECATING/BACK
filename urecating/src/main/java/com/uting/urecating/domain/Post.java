@@ -1,7 +1,7 @@
 package com.uting.urecating.domain;
 
+import com.uting.urecating.dto.PostUpdateDto;
 import jakarta.persistence.*;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -41,4 +41,24 @@ public class Post extends BaseEntity {
 
     @Column(nullable = false)
     private boolean status;
+
+    public Post(SiteUser user, String title, String content, Category category, LocalDateTime meetingDate, String place, int maxCapacity, boolean status) {
+        this.user = user;
+        this.title = title;
+        this.content = content;
+        this.category = category;
+        this.meetingDate = meetingDate;
+        this.place = place;
+        this.maxCapacity = maxCapacity;
+        this.status = status;
+    }
+
+    public void update(PostUpdateDto p){
+        this.title = p.title();
+        this.content = p.content();
+        this.category = p.category();
+        this.meetingDate = p.meetingDate();
+        this.place = p.place();
+        this.maxCapacity = p.maxCapacity();
+    }
 }
