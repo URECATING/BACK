@@ -35,11 +35,11 @@ public class UserService {
     }
 
     // 로그인
-    public SiteUser login(String login, String password){
+    public SiteUser login(String login, String password) {
         SiteUser user = userRepository.findByLogin(login)
                 .orElseThrow(() -> new RuntimeException("아이디가 존재하지 않습니다."));
 
-        if(!passwordEncoder.matches(password, user.getPassword())){
+        if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
 
@@ -53,8 +53,9 @@ public class UserService {
     }
 
     //마이페이지 수정 - 이미지, 비밀번호, 전화번호
-    public SiteUser updateUser(Long id, UserUpdateDto updateDto) {
-        SiteUser user = getUserById(id);
+    public SiteUser updateUser(String login, UserUpdateDto updateDto) {
+        SiteUser user = userRepository.findByLogin(login)
+                .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다"));
 
         String updatedPassword = updateDto.getPassword() !=null ?
                 passwordEncoder.encode(updateDto.getPassword()) : user.getPassword();
