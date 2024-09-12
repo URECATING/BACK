@@ -7,8 +7,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum ErrorCode {
 
-	POSTS_EMPTY_TITLE(400, "제목을 입력하세요.", 417),
-	POSTS_EMPTY_TEST(400, "Test입니다", 418);
+	JOIN_DATA_ERROR(500, "회원가입  - 정확한 값을 입력하세요.", 415),
+	JOIN_DUPLI_ERROR(400, "회원가입 - 이미 존재하는 사용자입니다.", 416),
+	SEARCH_ERROR(400, "데이터 조회 실패", 417);
 
 
 	private final int status;
