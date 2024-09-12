@@ -9,9 +9,12 @@ import com.uting.urecating.dto.UserJoinDto;
 import com.uting.urecating.dto.UserLoginDto;
 import com.uting.urecating.dto.UserUpdateDto;
 import com.uting.urecating.jwt.TokenProvider;
+import com.uting.urecating.s3.S3Service;
 import com.uting.urecating.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,11 +23,14 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Collections;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/user")
@@ -35,6 +41,7 @@ public class UserController {
     private final UserService userService;
     private final TokenProvider tokenProvider;
     private final AuthenticationManager authenticationManager;
+    private final S3Service s3Service;
 
     // 회원가입
     @PostMapping("/join")
@@ -95,37 +102,32 @@ public class UserController {
          }
     }
 
-    // 마이페이지 UPDATE
-
-    @PatchMapping("/mypage")
+  // 마이페이지 UPDATE
+    @PatchMapping(value = "/mypage", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     public ResponseEntity<?> updateMyPage(
             @RequestHeader(value = "Authorization", required = false) String tokenInfo,
-            @RequestBody UserUpdateDto updateDto) {
+            @ModelAttribute UserUpdateDto user) throws IOException {
 
         // 토큰에서 로그인 ID 추출
         String userLogin = tokenProvider.getUserLoginToken(tokenInfo);
 
+        // 이미지 파일이 있을 경우 S3에 업로드
+        String imageUrl = null;
+        if (user.getImage() != null && !user.getImage().isEmpty()) {
+            String fileName = UUID.randomUUID().toString() + user.getImage().getOriginalFilename();
+            imageUrl = s3Service.upload(user.getImage(), fileName);
+        }else{
+            imageUrl = null;
+        }
+
+//        System.out.println("Updated Image : "+imageUrl);
+
         // 유저 정보 업데이트
-        SiteUser updatedUser = userService.updateUser(userLogin, updateDto);
+        SiteUser updatedUser = userService.updateUser(userLogin, user.getPassword(), user.getPhone(), imageUrl);
 
         // 성공 메시지 및 업데이트된 유저 정보 반환
         ApiResponse<SiteUser> response = new ApiResponse(ResponseCode.SUCCESS_UPDATE_MYPAGE, updatedUser);
         return ResponseEntity.status(response.getStatus()).body(response);
 
     }
-
-//    @PatchMapping("/{id}/mypage")
-//    public ResponseEntity<?> updateMyPage(@PathVariable("id") Long id, @RequestBody UserUpdateDto updateDto) {
-//        try {
-//            SiteUser updatedUser = userService.updateUser(id, updateDto);
-//
-//            Map<String, Object> response = new HashMap<>();
-//            response.put("message", "정보수정 성공");
-//            response.put("user", updatedUser);
-//
-//            return ResponseEntity.ok(response);
-//        } catch (IllegalArgumentException e) {
-//            return ResponseEntity.notFound().build(); // 사용자 없음
-//        }
-//    }
 }
