@@ -60,9 +60,11 @@ public class UserService {
                 .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다"));
 
         //이미지 수정 시 기존 이미지 S3에서 삭제
-        if(imageUrl != null && user.getImage()!=null){
-            s3Service.delete(user.getImage());
+        if (imageUrl != null && user.getImage() != null) {
+//            System.out.println("Deleting image from S3: " + user.getImage().substring(user.getImage().lastIndexOf("/")+1));
+            s3Service.delete( user.getImage().substring(user.getImage().lastIndexOf("/")+1));
         }
+
 
         String updatedPassword = password != null ? passwordEncoder.encode(password) : user.getPassword();
 
