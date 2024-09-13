@@ -14,7 +14,7 @@ public class HelloController {
     @GetMapping("/")
     @ResponseBody
     public String hi() {
-        return "UrecaTing - SOS...!!!!";
+        return "UrecaTing - SOS..Taeyeon!!!";
     }
 
     @GetMapping("/springfoxtest")
@@ -24,5 +24,4 @@ public class HelloController {
         }};
         return ResponseEntity.ok(response);
     }
-    //테스트
 }
