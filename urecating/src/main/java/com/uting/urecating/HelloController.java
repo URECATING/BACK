@@ -14,7 +14,7 @@ public class HelloController {
     @GetMapping("/")
     @ResponseBody
     public String hi() {
-        return "UrecaTing - I am Ureca";
+        return "UrecaTing - I want to go home";
     }
 
     @GetMapping("/springfoxtest")
