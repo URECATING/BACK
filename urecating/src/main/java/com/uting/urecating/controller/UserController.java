@@ -128,8 +128,5 @@ public class UserController {
         // 성공 메시지 및 업데이트된 유저 정보 반환
         ApiResponse<SiteUser> response = new ApiResponse(ResponseCode.SUCCESS_UPDATE_MYPAGE, updatedUser);
         return ResponseEntity.status(response.getStatus()).body(response);
-
-
-
     }
 }
