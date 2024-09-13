@@ -77,18 +77,6 @@ public class UserController {
             throw new ApiException(ErrorCode.SEARCH_ERROR);
         }
     }
-//    @PostMapping("/login")
-//    public ResponseEntity<Map<String, Object>> login(@RequestBody UserLoginDto userLoginDto) {
-//        try {
-//            SiteUser user = userService.login(userLoginDto.getLogin(), userLoginDto.getPassword());
-//            Map<String, Object> response = new HashMap<>();
-//            response.put("message", "로그인 성공");
-//            response.put("user", user);
-//            return ResponseEntity.ok(response);
-//        } catch (RuntimeException e) {
-//            return ResponseEntity.status(401).body(Collections.singletonMap("error", e.getMessage()));
-//        }
-//    }
 
     // 마이페이지 조회
     @GetMapping("/{id}/mypage")
@@ -100,18 +88,6 @@ public class UserController {
         } catch (IllegalArgumentException e) {
             throw new ApiException(ErrorCode.SEARCH_ERROR);
          }
-    }
-
-    // 테스트
-    @GetMapping("/mypage")
-    public ResponseEntity<?> test(@PathVariable("id") Long id) {
-        try {
-            SiteUser user = userService.getUserById(1L);
-            ApiResponse<SiteUser> response = new ApiResponse(ResponseCode.SUCCESS_SEARCH_MYPAGE, user);
-            return ResponseEntity.status(response.getStatus()).body(response);
-        } catch (IllegalArgumentException e) {
-            throw new ApiException(ErrorCode.SEARCH_ERROR);
-        }
     }
 
   // 마이페이지 UPDATE
@@ -131,8 +107,6 @@ public class UserController {
         }else{
             imageUrl = null;
         }
-
-//        System.out.println("Updated Image : "+imageUrl);
 
         // 유저 정보 업데이트
         SiteUser updatedUser = userService.updateUser(userLogin, user.getPassword(), user.getPhone(), imageUrl);
