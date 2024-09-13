@@ -129,5 +129,7 @@ public class UserController {
         ApiResponse<SiteUser> response = new ApiResponse(ResponseCode.SUCCESS_UPDATE_MYPAGE, updatedUser);
         return ResponseEntity.status(response.getStatus()).body(response);
 
+
+
     }
 }
