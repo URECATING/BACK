@@ -79,4 +79,9 @@ public class UserService {
 
         return userRepository.save(updatedUser);
     }
+
+    public SiteUser findByUsername(String username) {
+        return userRepository.findByUserName(username)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+    }
 }
