@@ -6,16 +6,19 @@ import com.uting.urecating.domain.SiteUser;
 import com.uting.urecating.dto.PostSortDto;
 import com.uting.urecating.dto.PostRequestDto;
 import com.uting.urecating.dto.PostDetailDto;
-import com.uting.urecating.dto.PostUpdateDto;
 import com.uting.urecating.jwt.TokenProvider;
 import com.uting.urecating.repository.PostRepository;
 import com.uting.urecating.repository.UserRepository;
+import com.uting.urecating.s3.S3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 
@@ -26,6 +29,7 @@ public class PostService {
     private final PostRepository postRepository;
     private final TokenProvider tokenProvider;
     private final UserRepository userRepository;
+    private final S3Service s3Service;
 
     public List<PostDetailDto> getPosts(PostSortDto postSortDto) {
         Sort sort = Sort.by(postSortDto.sort(), postSortDto.order());
@@ -42,14 +46,23 @@ public class PostService {
         return postDetailDto;
     }
 
-    public PostDetailDto createPost(String tokenInfo, PostRequestDto requestDto) {
+    public PostDetailDto createPost(String tokenInfo, PostRequestDto requestDto, MultipartFile image) throws IOException {
         String userLogin = tokenProvider.getUserLoginToken(tokenInfo);
         SiteUser user = userRepository.findByLogin(userLogin).orElse(null);
+
+        String imageUrl = null;
+        if (image != null && !image.isEmpty()) {
+            String fileName = UUID.randomUUID().toString() + image.getOriginalFilename();
+            imageUrl = s3Service.upload(image, fileName);
+        }else{
+            imageUrl = null;
+        }
 
         Post post = new Post(
                 user,
                 requestDto.title(),
                 requestDto.content(),
+                imageUrl,
                 requestDto.category(),
                 requestDto.meetingDate(),
                 requestDto.place(),
@@ -62,11 +75,20 @@ public class PostService {
     }
 
     @Transactional
-    public PostDetailDto updatePost(Long postId, String tokenInfo, PostUpdateDto requestDto) {
+    public PostDetailDto updatePost(Long postId, String tokenInfo, PostRequestDto requestDto, MultipartFile image) throws IOException {
         String userLogin = tokenProvider.getUserLoginToken(tokenInfo);
         SiteUser user = userRepository.findByLogin(userLogin).orElse(null);
+
+        String imageUrl = null;
+        if (image != null && !image.isEmpty()) {
+            String fileName = UUID.randomUUID().toString() + image.getOriginalFilename();
+            imageUrl = s3Service.upload(image, fileName);
+        }else{
+            imageUrl = null;
+        }
+
         Post post = postRepository.findById(postId).orElse(null);
-        post.update(requestDto);
+        post.update(requestDto, imageUrl);
         postRepository.save(post);
         PostDetailDto postDetailDto = PostDetailDto.fromPost(post);
 
@@ -79,7 +101,7 @@ public class PostService {
 
     public List<PostDetailDto> getPostsByCategory(Category category, PostSortDto postSortDto) {
         Sort sort = Sort.by(postSortDto.sort(), postSortDto.order());
-        List<Post> postList = postRepository.findAllByCategory(category, sort).toList();
+        List<Post> postList = postRepository.findAllByCategory(category, sort);
         List<PostDetailDto> postDetailDtoList = postList.stream().map(p -> PostDetailDto.fromPost(p)).collect(Collectors.toList());
 
         return postDetailDtoList;
@@ -90,7 +112,7 @@ public class PostService {
         SiteUser user = userRepository.findByLogin(userLogin).orElse(null);
 
         Sort sort = Sort.by(postSortDto.sort(), postSortDto.order());
-        List<Post> postList = postRepository.findAllByUserId(user.getId(), sort).toList();
+        List<Post> postList = postRepository.findAllByUserId(user.getId(), sort);
         List<PostDetailDto> postDetailDtoList = postList.stream().map(p -> PostDetailDto.fromPost(p)).collect(Collectors.toList());
 
         return postDetailDtoList;

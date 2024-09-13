@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
-    Page<Post> findAllByUserId(Long userId, Sort sort);
+    List<Post> findAllByUserId(Long userId, Sort sort);
 
-    Page<Post> findAllByCategory(Category category, Sort sort);
+    List<Post> findAllByCategory(Category category, Sort sort);
 }
