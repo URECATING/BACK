@@ -79,7 +79,7 @@ jobs:
           script: |
             sudo systemctl stop urecating
             sudo systemctl disable urecating
-#            sudo systemctl daemon-reload
-#            sudo systemctl start urecating
-#            sudo systemctl enable urecating
-#            sudo systemctl status urecating
+            sudo systemctl daemon-reload
+            sudo systemctl start urecating
+            sudo systemctl enable urecating
+            sudo systemctl status urecating
