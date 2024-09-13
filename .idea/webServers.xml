@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="6936b3ec-397a-43f5-b0da-3e13af70a0b5" name="urecating" url="http://localhost:8080">
+        <fileTransfer rootFolder="/home/ec2-user" accessType="SFTP" host="52.78.9.240" port="22" sshConfigId="7f3e5fec-e907-401c-a4c7-0510a23c083a" sshConfig="ec2-user@52.78.9.240:22 key" keyPair="true">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
