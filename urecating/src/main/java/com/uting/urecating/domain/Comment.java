@@ -1,13 +1,23 @@
 package com.uting.urecating.domain;
 
 
+import com.uting.urecating.config.exception.ApiException;
+import com.uting.urecating.config.exception.ErrorCode;
+import com.uting.urecating.dto.CommentDto;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import java.util.ArrayList;
 import java.util.List;
 
+@Builder
 @Getter
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 public class Comment extends BaseEntity {
 
     @Id
@@ -35,3 +45,34 @@ public class Comment extends BaseEntity {
 
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -102,6 +102,18 @@ public class UserController {
          }
     }
 
+    // 테스트
+    @GetMapping("/mypage")
+    public ResponseEntity<?> test(@PathVariable("id") Long id) {
+        try {
+            SiteUser user = userService.getUserById(1L);
+            ApiResponse<SiteUser> response = new ApiResponse(ResponseCode.SUCCESS_SEARCH_MYPAGE, user);
+            return ResponseEntity.status(response.getStatus()).body(response);
+        } catch (IllegalArgumentException e) {
+            throw new ApiException(ErrorCode.SEARCH_ERROR);
+        }
+    }
+
   // 마이페이지 UPDATE
     @PatchMapping(value = "/mypage", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     public ResponseEntity<?> updateMyPage(
@@ -128,6 +140,5 @@ public class UserController {
         // 성공 메시지 및 업데이트된 유저 정보 반환
         ApiResponse<SiteUser> response = new ApiResponse(ResponseCode.SUCCESS_UPDATE_MYPAGE, updatedUser);
         return ResponseEntity.status(response.getStatus()).body(response);
-
     }
 }

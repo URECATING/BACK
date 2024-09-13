@@ -1,11 +1,16 @@
 package com.uting.urecating.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import com.uting.urecating.domain.Comment;
+import com.uting.urecating.domain.Post;
+import com.uting.urecating.domain.SiteUser;
+import lombok.*;
 
+@AllArgsConstructor
+@NoArgsConstructor
 @Getter
-@Setter
+@ToString
 public class UserLoginDto {
     private String login;
     private String password;
+
 }
