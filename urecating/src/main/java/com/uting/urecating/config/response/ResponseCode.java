@@ -13,7 +13,7 @@ public enum ResponseCode {
     SUCCESS_SEARCH_COMMENT(200, 206, "댓글 조회 성공", "정상처리"),
     SUCCESS_INSERT_COMMENT(200, 207, "댓글 입력 성공", "정상처리"),
     SUCCESS_UPDATE_COMMENT(200, 207, "댓글 수정 성공", "정상처리"),
-    SUCCESS_DELETE_COMMENT(200, 207, "댓글 수정 성공", "정상처리");
+    SUCCESS_DELETE_COMMENT(200, 207, "댓글 삭제 성공", "정상처리");
 
 
     private final int status;
