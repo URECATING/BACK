@@ -1,7 +1,6 @@
 package com.uting.urecating.service;
 
 import com.uting.urecating.domain.SiteUser;
-import com.uting.urecating.dto.UserUpdateDto;
 import com.uting.urecating.repository.UserRepository;
 import com.uting.urecating.s3.S3Service;
 import lombok.RequiredArgsConstructor;
@@ -55,7 +54,7 @@ public class UserService {
     }
 
     //마이페이지 수정 - 이미지, 비밀번호, 전화번호
-    public SiteUser updateUser(String login, String password, String phone, String imageUrl) {
+    public SiteUser updateUser(String login, String password, String imageUrl) {
         SiteUser user = userRepository.findByLogin(login)
                 .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다"));
 
@@ -74,7 +73,7 @@ public class UserService {
                 .userName(user.getUserName())
                 .team(user.getTeam())
                 .gender(user.getGender())
-                .phone(phone != null ? phone : user.getPhone())
+                .phone(user.getPhone())
                 .password(updatedPassword)
                 .image(imageUrl != null ? imageUrl : user.getImage())
                 .build();
@@ -85,5 +84,10 @@ public class UserService {
     public SiteUser findByUsername(String username) {
         return userRepository.findByUserName(username)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+    }
+
+    public SiteUser findByLogin(String login) {
+        return userRepository.findByLogin(login)
+                .orElseThrow(() -> new IllegalArgumentException("해당 사용자가 없습니다."));
     }
 }
