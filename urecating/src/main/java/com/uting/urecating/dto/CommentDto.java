@@ -21,6 +21,7 @@ public class CommentDto {
     private Long postId;
     private String content;
     private String username;
+    private Long parent;
     private LocalDateTime created_at;
     private LocalDateTime updated_at;
 
@@ -30,6 +31,7 @@ public class CommentDto {
                 post.getId(),
                 comment.getContent(),
                 user.getUserName(),
+                comment.getParent() != null ? comment.getParent().getId() : null, // 부모 댓글이 없는 경우 null
                 comment.getCreatedAt(),
                 comment.getUpdatedAt()
         );

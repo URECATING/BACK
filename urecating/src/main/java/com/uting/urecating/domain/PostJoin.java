@@ -3,11 +3,13 @@ package com.uting.urecating.domain;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Table(name="user_join")
-public class Join extends BaseEntity{
+@NoArgsConstructor
+@Table(name="post_join")
+public class PostJoin extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,4 +23,9 @@ public class Join extends BaseEntity{
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
+
+    public PostJoin(SiteUser user, Post post) {
+        this.user = user;
+        this.post = post;
+    }
 }

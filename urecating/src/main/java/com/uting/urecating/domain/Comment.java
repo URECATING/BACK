@@ -1,9 +1,6 @@
 package com.uting.urecating.domain;
 
 
-import com.uting.urecating.config.exception.ApiException;
-import com.uting.urecating.config.exception.ErrorCode;
-import com.uting.urecating.dto.CommentDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

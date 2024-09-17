@@ -6,6 +6,7 @@ import com.uting.urecating.domain.Post;
 import com.uting.urecating.domain.SiteUser;
 import com.uting.urecating.dto.CommentDto;
 import com.uting.urecating.dto.CommentFieldDto;
+import com.uting.urecating.dto.CommentReplyDto;
 import com.uting.urecating.repository.CommentRepository;
 import com.uting.urecating.repository.PostRepository;
 import lombok.Builder;
@@ -42,6 +43,8 @@ public class CommentService {
     public CommentDto createComments(Long postId, CommentFieldDto dto, SiteUser user) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException());
+
+
         Comment comment = Comment.builder()
                 .content(dto.getContent())
                 .post(post)
@@ -50,6 +53,25 @@ public class CommentService {
 
         Comment created = commentRepository.save(comment);
         return CommentDto.createCommentDto(created, user, post);
+    }
+
+    @Transactional
+    public CommentDto createReply(Long parentId, CommentReplyDto dto, SiteUser user) {
+        // 부모 댓글 찾기
+        Comment parent = commentRepository.findById(parentId)
+                .orElseThrow(() -> new IllegalArgumentException());
+
+        // 대댓글 생성
+        Comment comment = Comment.builder()
+                .content(dto.getContent())
+                .post(parent.getPost()) // 부모 댓글이 속한 게시물 가져오기
+                .user(user)
+                .parent(parent)  // 대댓글의 부모 댓글 설정
+                .build();
+
+        // 대댓글 저장
+        Comment created = commentRepository.save(comment);
+        return CommentDto.createCommentDto(created, user, created.getPost());
     }
 
     @Transactional
