@@ -49,7 +49,12 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
-      # (6) 빌드 결과물을 S3 버킷에 업로드
+      # (6) 기존 S3 버킷의 파일 삭제
+      - name: Delete existing files in S3 bucket
+        run: |
+          aws s3 rm s3://$S3_BUCKET_NAME/ --recursive
+
+      # (7) 빌드 결과물을 S3 버킷에 업로드
       - name: Upload to AWS S3
         run: |
           aws deploy push \
@@ -57,11 +62,6 @@ jobs:
             --ignore-hidden-files \
             --s3-location s3://$S3_BUCKET_NAME/$GITHUB_SHA.zip \
             --source ./urecating
-
-      # (6) 기존 S3 버킷의 파일 삭제
-      - name: Delete existing files in S3 bucket
-        run: |
-          aws s3 rm s3://$S3_BUCKET_NAME/ --recursive
 
       # (7) S3 버킷에 있는 파일을 대상으로 CodeDeploy 실행
       - name: Deploy to AWS EC2 from S3
