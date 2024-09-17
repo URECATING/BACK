@@ -8,6 +8,7 @@ import com.uting.urecating.config.response.ResponseCode;
 import com.uting.urecating.domain.SiteUser;
 import com.uting.urecating.dto.CommentDto;
 import com.uting.urecating.dto.CommentFieldDto;
+import com.uting.urecating.dto.CommentReplyDto;
 import com.uting.urecating.service.CommentService;
 import com.uting.urecating.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -51,6 +52,21 @@ public class CommentController {
         return ResponseEntity.status(response.getStatus()).body(response);}
         catch (IllegalArgumentException e){
             throw new ApiException(ErrorCode.COMMENT_INSERT_ERROR);
+        }
+    }
+    @PostMapping("/post/{parent_id}/comments/reply")
+    public ResponseEntity<ApiResponse<CommentDto>> createReply(
+            @PathVariable Long parent_id, @RequestBody CommentReplyDto dto) {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String username = ((UserDetails) authentication.getPrincipal()).getUsername();
+            SiteUser user = userService.findByUsername(username);
+
+            CommentDto createDto = commentService.createReply(parent_id, dto, user);
+            ApiResponse<CommentDto> response = new ApiResponse<>(ResponseCode.SUCCESS_INSERT_COMMENT, createDto);
+            return ResponseEntity.status(response.getStatus()).body(response);
+        } catch (IllegalArgumentException e) {
+            throw new ApiException(ErrorCode.COMMENTREPLY_INSERT_ERROR);
         }
     }
 
