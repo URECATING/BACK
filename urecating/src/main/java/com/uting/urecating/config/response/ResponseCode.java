@@ -14,7 +14,14 @@ public enum ResponseCode {
     SUCCESS_INSERT_COMMENT(200, 207, "댓글 입력 성공", "정상처리"),
     SUCCESS_UPDATE_COMMENT(200, 208, "댓글 수정 성공", "정상처리"),
     SUCCESS_DELETE_COMMENT(200, 209, "댓글 삭제 성공", "정상처리"),
-    SUCCESS_JOIN_POST(200, 210, "참가 성공", "정상처리");
+    SUCCESS_JOIN_POST(200, 210, "참가 성공", "정상처리"),
+
+    SUCCESS_SEARCH_POST(200, 211, "게시글 조회 성공", "정상처리"),
+    SUCCESS_CREATE_POST(200, 212, "게시글 작성 성공", "정상처리"),
+    SUCCESS_UPDATE_POST(200, 213, "게시글 수정 성공", "정상처리"),
+    SUCCESS_DELETE_POST(200, 214, "게시글 삭제 성공", "정상처리"),
+    SUCCESS_CATEGORY_POST(200, 215, "카테고리별 게시글 조회 성공", "정상처리"),
+    SUCCESS_USER_POST(200, 216, "사용자 작성 게시글 조회 성공", "정상처리");
 
 
     private final int status;

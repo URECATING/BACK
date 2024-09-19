@@ -31,8 +31,9 @@ public class PostService {
     private final UserRepository userRepository;
     private final S3Service s3Service;
 
-    public List<PostDetailDto> getPosts(PostSortDto postSortDto) {
-        Sort sort = Sort.by(postSortDto.sort(), postSortDto.order());
+    public List<PostDetailDto> getPosts() {
+//        Sort sort = Sort.by(postSortDto.sort(), postSortDto.order());
+        Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
         List<Post> postList = postRepository.findAll(sort);
         List<PostDetailDto> postDetailDtoList = postList.stream().map(p -> PostDetailDto.fromPost(p)).collect(Collectors.toList());
 
@@ -40,7 +41,7 @@ public class PostService {
     }
 
     public PostDetailDto getPost(Long postId) {
-        Post post = postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException("Post not found"));
+        Post post = postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException("게시글 조회 실패"));
         PostDetailDto postDetailDto = PostDetailDto.fromPost(post);
 
         return postDetailDto;
@@ -48,7 +49,7 @@ public class PostService {
 
     public PostDetailDto createPost(String tokenInfo, PostRequestDto requestDto, MultipartFile image) throws IOException {
         String userLogin = tokenProvider.getUserLoginToken(tokenInfo);
-        SiteUser user = userRepository.findByLogin(userLogin).orElse(null);
+        SiteUser user = userRepository.findByLogin(userLogin).orElseThrow(() -> new IllegalArgumentException("사용자 조회 실패"));
 
         String imageUrl = null;
         if (image != null && !image.isEmpty()) {
@@ -77,7 +78,7 @@ public class PostService {
     @Transactional
     public PostDetailDto updatePost(Long postId, String tokenInfo, PostRequestDto requestDto, MultipartFile image) throws IOException {
         String userLogin = tokenProvider.getUserLoginToken(tokenInfo);
-        SiteUser user = userRepository.findByLogin(userLogin).orElse(null);
+        SiteUser user = userRepository.findByLogin(userLogin).orElseThrow(() -> new IllegalArgumentException("사용자 조회 실패"));
 
         String imageUrl = null;
         if (image != null && !image.isEmpty()) {
@@ -88,6 +89,15 @@ public class PostService {
         }
 
         Post post = postRepository.findById(postId).orElse(null);
+        if (post == null) {
+            throw new IllegalArgumentException("게시글 조회 실패");
+        }
+
+        if (imageUrl != null && post.getImage() != null) {
+//            System.out.println("Deleting image from S3: " + user.getImage().substring(user.getImage().lastIndexOf("/")+1));
+            s3Service.delete( post.getImage().substring(post.getImage().lastIndexOf("/")+1));
+        }
+
         post.update(requestDto, imageUrl);
         postRepository.save(post);
         PostDetailDto postDetailDto = PostDetailDto.fromPost(post);
@@ -96,23 +106,28 @@ public class PostService {
     }
 
     public void deletePost(Long postId) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException("게시글 조회 실패"));
         postRepository.deleteById(postId);
     }
 
-    public List<PostDetailDto> getPostsByCategory(Category category, PostSortDto postSortDto) {
-        Sort sort = Sort.by(postSortDto.sort(), postSortDto.order());
-        List<Post> postList = postRepository.findAllByCategory(category, sort);
+    public List<PostDetailDto> getPostsByCategory(Category category) {
+//        Sort sort = Sort.by(postSortDto.sort(), postSortDto.order());
+
+        Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
+        List<Post> postList = postRepository.findAllByCategory(category, sort).orElseThrow(() -> new IllegalArgumentException("게시글 조회 실패"));
         List<PostDetailDto> postDetailDtoList = postList.stream().map(p -> PostDetailDto.fromPost(p)).collect(Collectors.toList());
 
         return postDetailDtoList;
     }
 
-    public List<PostDetailDto> getPostsByUser(String tokenInfo, PostSortDto postSortDto) {
+    public List<PostDetailDto> getPostsByUser(String tokenInfo) {
         String userLogin = tokenProvider.getUserLoginToken(tokenInfo);
-        SiteUser user = userRepository.findByLogin(userLogin).orElse(null);
+        SiteUser user = userRepository.findByLogin(userLogin).orElseThrow(() -> new IllegalArgumentException("사용자 조회 실패"));
 
-        Sort sort = Sort.by(postSortDto.sort(), postSortDto.order());
-        List<Post> postList = postRepository.findAllByUserId(user.getId(), sort);
+//        Sort sort = Sort.by(postSortDto.sort(), postSortDto.order());
+        Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
+
+        List<Post> postList = postRepository.findAllByUserId(user.getId(), sort).orElseThrow(() -> new IllegalArgumentException("게시글 조회 실패"));
         List<PostDetailDto> postDetailDtoList = postList.stream().map(p -> PostDetailDto.fromPost(p)).collect(Collectors.toList());
 
         return postDetailDtoList;

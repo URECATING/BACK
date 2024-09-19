@@ -15,8 +15,16 @@ public enum ErrorCode {
 	COMMENT_SEARCH_ERROR(400, "댓글 조회 실패, 게시글이 존재 하지 않습니다.", 419),
 	COMMENT_UPDATE_ID_ERROR(400, "댓글 수정 실패, 댓글이 존재 하지 않습니다.", 420),
 	COMMENT_DELETE_ERROR(400, "댓글 삭제 실패, 댓글이 존재 하지 않습니다.", 421),
-	POST_JOIN_ERROR(400, "댓글 삭제 실패, 댓글이 존재 하지 않습니다.", 422);
+	POST_JOIN_ERROR(400, "댓글 삭제 실패, 댓글이 존재 하지 않습니다.", 422),
 
+	POST_SEARCH_ERROR(400, "게시글 조회 실패, 게시글이 존재하지 않습니다", 423),
+	POST_CREATE_ERROR(400, "게시글 작성 실패, 사용자가 존재하지 않습니다", 424),
+	POST_UPDATE_USER_ERROR(400, "게시글 수정 실패, 사용자가 존재하지 않습니다", 425),
+	POST_UPDATE_POST_ERROR(400, "게시글 수정 실패, 게시글이 존재하지 않습니다", 426),
+	POST_DELETE_ERROR(400, "게시글 삭제 실패, 게시글이 존재하지 않습니다", 427),
+	POST_CATEGORY_ERROR(400, "카테고리별 게시글 조회 실패, 사용자가 존재하지 않습니다", 428),
+	POST_USER_USER_ERROR(400, "사용자 작성 게시글 조회 실패, 사용자가 존재하지 않습니다", 429),
+	POST_USER_POST_ERROR(400, "사용자 작성 게시글 조회 실패, 게시글이 존재하지 않습니다", 430);
 
 
 	private final int status;
