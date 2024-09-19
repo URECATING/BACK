@@ -5,11 +5,12 @@ import com.uting.urecating.domain.Post;
 import com.uting.urecating.domain.SiteUser;
 import com.uting.urecating.domain.PostJoin;
 import com.uting.urecating.dto.PostJoinDto;
+import com.uting.urecating.config.exception.PostNotFoundException;
+import com.uting.urecating.config.exception.UserNotFoundException;
 import com.uting.urecating.repository.PostRepository;
 import com.uting.urecating.repository.PostJoinRepository;
 import com.uting.urecating.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,10 +29,10 @@ public class PostJoinService {
 
     public void postJoin(Long userId, Long postId) {
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new IllegalArgumentException("게시물을 찾을 수 없습니다."));
+                .orElseThrow(() -> new PostNotFoundException("No post found with id: " + postId));
 
         SiteUser user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new UserNotFoundException("No user found with id: " + userId));
         PostJoin postJoin = new PostJoin(user, post);
         postJoinRepository.save(postJoin);
     }
