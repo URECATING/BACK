@@ -7,6 +7,7 @@ import com.uting.urecating.domain.PostJoin;
 import com.uting.urecating.dto.PostJoinDto;
 import com.uting.urecating.config.exception.PostNotFoundException;
 import com.uting.urecating.config.exception.UserNotFoundException;
+import com.uting.urecating.jwt.TokenProvider;
 import com.uting.urecating.repository.PostRepository;
 import com.uting.urecating.repository.PostJoinRepository;
 import com.uting.urecating.repository.UserRepository;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 public class PostJoinService {
 
     private final PostJoinRepository postJoinRepository;
+    private final TokenProvider tokenProvider;
     private final PostRepository postRepository;
     private final UserRepository userRepository;
 
@@ -52,9 +54,9 @@ public class PostJoinService {
     }
 
     @Transactional(readOnly = true)
-    public List<PostJoinDto> getJoinByUser(Long userId) {
-        SiteUser user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 사용자를 찾을 수 없습니다."));
+    public List<PostJoinDto> getJoinByUser(String tokenInfo) {
+        String userLogin = tokenProvider.getUserLoginToken(tokenInfo);
+        SiteUser user = userRepository.findByLogin(userLogin).orElseThrow(()  -> new IllegalArgumentException("해당 사용자를 찾을 수 없습니다."));
 
         List<PostJoin> postJoins = postJoinRepository.findByUser(user);
         return postJoins.stream()
@@ -67,6 +69,23 @@ public class PostJoinService {
         PostJoin postJoin = postJoinRepository.findById(joinId)
                 .orElseThrow(() -> new IllegalArgumentException("참가 정보를 찾을 수 없습니다."));
         postJoinRepository.delete(postJoin);
+    }
+
+    @Transactional(readOnly = true)
+    public SiteUser getUserFromToken(String tokenInfo) {
+        String userLogin = tokenProvider.getUserLoginToken(tokenInfo);
+        return userRepository.findByLogin(userLogin)
+                .orElseThrow(() -> new UserNotFoundException("No user found with login: " + userLogin));
+    }
+
+    @Transactional(readOnly = true)
+    public boolean checkUserJoinPost(String tokenInfo, Long postId) {
+        SiteUser user = getUserFromToken(tokenInfo);
+
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new PostNotFoundException("No post found with id: " + postId));
+
+        return postJoinRepository.existsByUserAndPost(user, post);
     }
 
 

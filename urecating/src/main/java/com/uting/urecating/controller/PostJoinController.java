@@ -64,10 +64,10 @@ public class PostJoinController {
         }
     }
 
-    @GetMapping("/users/{userId}/joins")
-    public ResponseEntity<ApiResponse<List<PostJoinDto>>> getJoinByUser(@PathVariable Long userId) {
+    @GetMapping("/users/joins")
+    public ResponseEntity<ApiResponse<List<PostJoinDto>>> getJoinByUser(@RequestHeader(value = "Authorization", required = false) String tokenInfo) {
         try {
-            List<PostJoinDto> joins = postJoinService.getJoinByUser(userId);
+            List<PostJoinDto> joins = postJoinService.getJoinByUser(tokenInfo);
             ApiResponse<List<PostJoinDto>> response = new ApiResponse<>(ResponseCode.SUCCESS_SEARCH_JOIN_POST, joins);
             return ResponseEntity.status(response.getStatus()).body(response);
         } catch (IllegalArgumentException e) {
@@ -85,4 +85,22 @@ public class PostJoinController {
             throw new ApiException(ErrorCode.POST_JOIN_DELETE_USER_ERROR);
         }
     }
+
+    @GetMapping("/posts/{postId}")
+    public ResponseEntity<ApiResponse<Boolean>> checkUserJoinedPost(@PathVariable Long postId, @RequestHeader(value = "Authorization", required = false) String tokenInfo) {
+        try {
+        boolean isJoined = postJoinService.checkUserJoinPost(tokenInfo, postId);
+            ApiResponse<Boolean> response = new ApiResponse<>(ResponseCode.SUCCESS_CHECK_JOIN_POST, isJoined);
+            return ResponseEntity.status(response.getStatus()).body(response);
+        }
+        catch (PostNotFoundException e){
+            throw new ApiException(ErrorCode.POST_JOIN_CHECK_POST_ERROR);
+        }
+        catch (IllegalArgumentException e) {
+                throw new ApiException(ErrorCode.POST_JOIN_CHECK_ERROR);
+            }
+    }
+
+
+
 }
