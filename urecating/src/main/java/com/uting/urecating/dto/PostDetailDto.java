@@ -5,7 +5,7 @@ import com.uting.urecating.domain.Post;
 
 import java.time.LocalDateTime;
 
-public record PostDetailDto(Long userId, String username, String userImage, String team, String title, String content, String image, Category category, LocalDateTime meetingDate, String place, int maxCapacity, LocalDateTime createdAt, LocalDateTime updatedAt, String status) {
+public record PostDetailDto(Long userId, String username, String userImage, String team, Long postId, String title, String content, String image, Category category, LocalDateTime meetingDate, String place, int maxCapacity, LocalDateTime createdAt, LocalDateTime updatedAt, String status) {
 
     public static PostDetailDto fromPost(Post p) {
         String status;
@@ -20,6 +20,7 @@ public record PostDetailDto(Long userId, String username, String userImage, Stri
                 p.getUser().getUserName(),
                 p.getUser().getImage(),
                 p.getUser().getTeam(),
+                p.getId(),
                 p.getTitle(),
                 p.getContent(),
                 p.getImage(),
