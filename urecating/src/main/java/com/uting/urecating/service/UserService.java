@@ -1,5 +1,6 @@
 package com.uting.urecating.service;
 
+import com.uting.urecating.config.exception.UserNotFoundException;
 import com.uting.urecating.domain.SiteUser;
 import com.uting.urecating.dto.UserUpdateDto;
 import com.uting.urecating.repository.UserRepository;
@@ -82,8 +83,8 @@ public class UserService {
         return userRepository.save(updatedUser);
     }
 
-    public SiteUser findByUsername(String username) {
-        return userRepository.findByUserName(username)
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+    public SiteUser findByLogin(String login) {
+        return userRepository.findByLogin(login)
+                .orElseThrow(() -> new UserNotFoundException("User not found with login: " + login));
     }
 }

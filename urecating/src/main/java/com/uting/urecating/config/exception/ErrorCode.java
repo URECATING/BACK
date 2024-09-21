@@ -20,7 +20,11 @@ public enum ErrorCode {
 	POST_JOIN_USER_ERROR(400, "참가 실패, 사용자를 찾을 수 없습니다.", 424),
 	POST_JOIN_SEARCH_POST_ERROR(400, "참가 목록 검색 실패, 게시물을 찾을 수 없습니다.", 424),
 	POST_JOIN_SEARCH_USER_ERROR(400, "참가 목록 검색 실패, 사용자를 찾을 수 없습니다.", 425),
-	POST_JOIN_DELETE_USER_ERROR(400, "참가 삭제 실패, 참가 정보를 찾을 수 없습니다.", 425),;
+	POST_JOIN_DELETE_USER_ERROR(400, "참가 삭제 실패, 참가 정보를 찾을 수 없습니다.", 425),
+	LIKE_POST_ERROR(400, " 좋아요 실패, 참가 정보를 찾을 수 없습니다.", 425),
+	LIKE_POST_DELETE_ERROR(400, "좋아요 삭제 실패, 참가 정보를 찾을 수 없습니다.", 425),
+	LIKE_POST_CHECK_ERROR(400, "좋아요 확인 검색 실패, 참가 정보를 찾을 수 없습니다.", 425),
+	LIKE_POST_SEARCH_ERROR(400, "좋아요 목록 검색 실패, 참가 정보를 찾을 수 없습니다.", 425);
 
 
 

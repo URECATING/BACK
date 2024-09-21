@@ -43,9 +43,10 @@ public class CommentController {
     public ResponseEntity<ApiResponse<CommentDto>> createComments(
             @PathVariable Long post_id, @RequestBody CommentFieldDto dto){
         try{
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = ((UserDetails) authentication.getPrincipal()).getUsername();
-        SiteUser user = userService.findByUsername(username);
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String login = authentication.getName();  // 로그인된 사용자의 아이디 (login 필드)
+
+            SiteUser user = userService.findByLogin(login);
 
         CommentDto createDto = commentService.createComments(post_id, dto, user);
         ApiResponse<CommentDto> response = new ApiResponse<>(ResponseCode.SUCCESS_INSERT_COMMENT, createDto);
@@ -59,8 +60,9 @@ public class CommentController {
             @PathVariable Long parent_id, @RequestBody CommentReplyDto dto) {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String username = ((UserDetails) authentication.getPrincipal()).getUsername();
-            SiteUser user = userService.findByUsername(username);
+            String login = authentication.getName();  // 로그인된 사용자의 아이디 (login 필드)
+
+            SiteUser user = userService.findByLogin(login);
 
             CommentDto createDto = commentService.createReply(parent_id, dto, user);
             ApiResponse<CommentDto> response = new ApiResponse<>(ResponseCode.SUCCESS_INSERT_COMMENT, createDto);

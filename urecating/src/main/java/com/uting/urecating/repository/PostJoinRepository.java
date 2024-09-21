@@ -10,4 +10,6 @@ import java.util.List;
 public interface PostJoinRepository extends JpaRepository<PostJoin, Long>{
     List<PostJoin> findByPost(Post post);
     List<PostJoin> findByUser(SiteUser user);
+
+    boolean existsByUserAndPost(SiteUser user, Post post);
 }
