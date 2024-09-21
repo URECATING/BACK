@@ -82,10 +82,6 @@ public class UserService {
         return userRepository.save(updatedUser);
     }
 
-    public SiteUser findByLogin(String login) {
-        return userRepository.findByLogin(login)
-                .orElseThrow(() -> new UserNotFoundException("User not found with login: " + login));
-    }
 
     public SiteUser findByLogin(String login) {
         return userRepository.findByLogin(login)

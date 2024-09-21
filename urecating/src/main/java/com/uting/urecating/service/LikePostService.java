@@ -27,7 +27,9 @@ public class LikePostService {
                 .orElseThrow(() -> new PostNotFoundException("No post found with id: " + postId));
         SiteUser user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("No post found with id: " + postId));
-
+        if (likePostRepository.existsByUserAndPost(user, post)) {
+            throw new IllegalArgumentException("User has already joined this post.");
+        }
         LikePost likePost = new LikePost(user, post);
         likePostRepository.save(likePost);
     }
@@ -35,10 +37,10 @@ public class LikePostService {
     @Transactional
     public void removeLikePost(Long userId, Long postId) {
         SiteUser user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found for userId: " + userId));
+                .orElseThrow(() -> new UserNotFoundException("User not found for userId: " + userId));
 
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new IllegalArgumentException("Post not found for postId: " + postId));
+                .orElseThrow(() -> new PostNotFoundException("Post not found for postId: " + postId));
 
         LikePost likePost = likePostRepository.findByUserAndPost(user, post)
                 .orElseThrow(() -> new IllegalArgumentException("LikePost not found for userId: " + userId + " and postId: " + postId));
