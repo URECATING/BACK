@@ -33,6 +33,10 @@ public class PostJoinService {
 
         SiteUser user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("No user found with id: " + userId));
+
+        if (postJoinRepository.existsByUserAndPost(user, post)) {
+            throw new IllegalArgumentException("User has already joined this post.");
+        }
         PostJoin postJoin = new PostJoin(user, post);
         postJoinRepository.save(postJoin);
     }
@@ -67,10 +71,5 @@ public class PostJoinService {
 
 
 
-    public Long findUserIdByUsername(String username) {
-        return userRepository.findByUserName(username)
-                .map(SiteUser::getId)
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
-    }
 
 }

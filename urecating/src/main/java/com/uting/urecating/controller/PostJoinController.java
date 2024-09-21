@@ -4,11 +4,13 @@ import com.uting.urecating.config.exception.ApiException;
 import com.uting.urecating.config.exception.ErrorCode;
 import com.uting.urecating.config.response.ApiResponse;
 import com.uting.urecating.config.response.ResponseCode;
+import com.uting.urecating.domain.SiteUser;
 import com.uting.urecating.dto.PostJoinDto;
 import com.uting.urecating.config.exception.PostNotFoundException;
 import com.uting.urecating.config.exception.UserNotFoundException;
 import com.uting.urecating.dto.PostJoinFieldDto;
 import com.uting.urecating.service.PostJoinService;
+import com.uting.urecating.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -24,13 +26,17 @@ import java.util.List;
 public class PostJoinController {
 
     private final PostJoinService postJoinService;
+    private final UserService userService;
 
     @PostMapping
     public ResponseEntity<ApiResponse<PostJoinFieldDto>> postJoin(@RequestBody PostJoinFieldDto dto) {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String username = ((UserDetails) authentication.getPrincipal()).getUsername();
-            Long userId = postJoinService.findUserIdByUsername(username); // 사용자 ID 찾기
+            String login = authentication.getName();  // 로그인된 사용자의 아이디 (login 필드)
+
+            // 로그인 아이디를 통해 SiteUser 엔티티를 조회하고, 해당 사용자의 ID를 가져옴
+            SiteUser siteUser = userService.findByLogin(login);
+            Long userId = siteUser.getId();
             postJoinService.postJoin(userId, dto.getPostId());
 
             ApiResponse<PostJoinFieldDto> response = new ApiResponse<>(ResponseCode.SUCCESS_JOIN_POST, dto);
@@ -50,8 +56,8 @@ public class PostJoinController {
     public ResponseEntity<ApiResponse<List<PostJoinDto>>> getJoinByPost (@PathVariable Long postId) {
         try {
             List<PostJoinDto> joins = postJoinService.getJoinByPost(postId);
-            ApiResponse<List<PostJoinDto>> response = new ApiResponse<>(ResponseCode.SUCCESS_JOIN_POST, joins);
-            return ResponseEntity.status(response.getStatus()).body(response); // 수정예정
+            ApiResponse<List<PostJoinDto>> response = new ApiResponse<>(ResponseCode.SUCCESS_SEARCH_JOIN_POST, joins);
+            return ResponseEntity.status(response.getStatus()).body(response);
         }  catch (IllegalArgumentException e) {
             throw new ApiException(ErrorCode.POST_JOIN_SEARCH_POST_ERROR);
         }
@@ -61,8 +67,8 @@ public class PostJoinController {
     public ResponseEntity<ApiResponse<List<PostJoinDto>>> getJoinByUser(@PathVariable Long userId) {
         try {
             List<PostJoinDto> joins = postJoinService.getJoinByUser(userId);
-            ApiResponse<List<PostJoinDto>> response = new ApiResponse<>(ResponseCode.SUCCESS_JOIN_POST, joins);
-            return ResponseEntity.status(response.getStatus()).body(response);// 수정예정
+            ApiResponse<List<PostJoinDto>> response = new ApiResponse<>(ResponseCode.SUCCESS_SEARCH_JOIN_POST, joins);
+            return ResponseEntity.status(response.getStatus()).body(response);
         } catch (IllegalArgumentException e) {
             throw new ApiException(ErrorCode.POST_JOIN_SEARCH_USER_ERROR);
         }
@@ -73,7 +79,7 @@ public class PostJoinController {
         try {
             postJoinService.deleteJoinById(joinId);
             ApiResponse<Void> response = new ApiResponse<>(ResponseCode.SUCCESS_DELETE_JOIN_POST, null);
-            return ResponseEntity.status(response.getStatus()).body(response);// 수정예정
+            return ResponseEntity.status(response.getStatus()).body(response);
         } catch (IllegalArgumentException e) {
             throw new ApiException(ErrorCode.POST_JOIN_DELETE_USER_ERROR);
         }

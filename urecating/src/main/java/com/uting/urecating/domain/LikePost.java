@@ -2,10 +2,14 @@ package com.uting.urecating.domain;
 
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 public class LikePost extends BaseEntity{
 
     @Id
@@ -21,4 +25,7 @@ public class LikePost extends BaseEntity{
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
-}
+    public LikePost(SiteUser user, Post post) {
+        this.user = user;
+        this.post = post;
+    }}
