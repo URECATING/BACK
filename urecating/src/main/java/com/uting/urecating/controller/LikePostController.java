@@ -3,6 +3,8 @@ package com.uting.urecating.controller;
 
 import com.uting.urecating.config.exception.ApiException;
 import com.uting.urecating.config.exception.ErrorCode;
+import com.uting.urecating.config.exception.PostNotFoundException;
+import com.uting.urecating.config.exception.UserNotFoundException;
 import com.uting.urecating.config.response.ApiResponse;
 import com.uting.urecating.config.response.ResponseCode;
 import com.uting.urecating.domain.LikePost;
@@ -36,8 +38,15 @@ public class LikePostController {
             likePostService.addLikePost(user.getId(), post_id);
             ApiResponse<Void> response = new ApiResponse<>(ResponseCode.SUCCESS_LIKE_POST, null);
             return ResponseEntity.status(response.getStatus()).body(response);
-        } catch (IllegalArgumentException e) {
-            throw new ApiException(ErrorCode.LIKE_POST_ERROR);
+        }  catch (UserNotFoundException e) {
+            throw new ApiException(ErrorCode.LIKE_POST_USER_ERROR);
+        } catch (PostNotFoundException e) {
+            throw new ApiException(ErrorCode.LIKE_POST_POST_ERROR);
+        }catch (IllegalArgumentException e ){
+            throw new ApiException(ErrorCode.LIKE_POST_DOUBLE_ERROR);
+        }
+        catch (Exception e) {
+            throw new ApiException(ErrorCode.POST_JOIN_ERROR);
         }
     }
 
@@ -52,6 +61,10 @@ public class LikePostController {
             likePostService.removeLikePost(user.getId(), post_id);
             ApiResponse<Void> response = new ApiResponse<>(ResponseCode.SUCCESS_DELETE_LIKE_POST, null);
             return ResponseEntity.status(response.getStatus()).body(response);
+        }  catch (UserNotFoundException e) {
+            throw new ApiException(ErrorCode.LIKE_POST_USER_DELETE_ERROR);
+        } catch (PostNotFoundException e) {
+            throw new ApiException(ErrorCode.LIKE_POST_POST_DELETE_ERROR);
         } catch (IllegalArgumentException e) {
             throw new ApiException(ErrorCode.LIKE_POST_DELETE_ERROR);
         }
@@ -68,6 +81,10 @@ public class LikePostController {
             boolean isLiked = likePostService.isPostLikedByUser(user.getId(), post_id);
             ApiResponse<Boolean> response = new ApiResponse<>(ResponseCode.SUCCESS_CHECK_LIKE_POST, isLiked);
             return ResponseEntity.status(response.getStatus()).body(response);
+        }  catch (UserNotFoundException e) {
+            throw new ApiException(ErrorCode.LIKE_POST_USER_CHECK_ERROR);
+        } catch (PostNotFoundException e) {
+            throw new ApiException(ErrorCode.LIKE_POST_POST_CHECK_ERROR);
         } catch (IllegalArgumentException e) {
             throw new ApiException(ErrorCode.LIKE_POST_CHECK_ERROR);
         }
@@ -92,7 +109,9 @@ public class LikePostController {
 
             ApiResponse<List<LikePostDto>> response = new ApiResponse<>(ResponseCode.SUCCESS_SEARCH_LIKE_POST, likedPostDtos);
             return ResponseEntity.status(response.getStatus()).body(response);
-        } catch (IllegalArgumentException e) {
+        } catch (UserNotFoundException e) {
+            throw new ApiException(ErrorCode.LIKE_POST_USER_SEARCH_ERROR);
+        }catch (IllegalArgumentException e) {
             throw new ApiException(ErrorCode.LIKE_POST_SEARCH_ERROR);
         }
     }

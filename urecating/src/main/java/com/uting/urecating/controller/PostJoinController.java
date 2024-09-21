@@ -42,12 +42,13 @@ public class PostJoinController {
             ApiResponse<PostJoinFieldDto> response = new ApiResponse<>(ResponseCode.SUCCESS_JOIN_POST, dto);
             return ResponseEntity.status(response.getStatus()).body(response);
         } catch (UserNotFoundException e) {
-            // 사용자 정의 예외 클래스 사용 예시
             throw new ApiException(ErrorCode.POST_JOIN_USER_ERROR);
         } catch (PostNotFoundException e) {
-            // 사용자 정의 예외 클래스 사용 예시
             throw new ApiException(ErrorCode.POST_JOIN_POST_ERROR);
-        } catch (Exception e) {
+        }catch (IllegalArgumentException e ){
+            throw new ApiException(ErrorCode.POST_JOIN_DOUBLE_ERROR);
+        }
+        catch (Exception e) {
             throw new ApiException(ErrorCode.POST_JOIN_ERROR);
         }
     }
