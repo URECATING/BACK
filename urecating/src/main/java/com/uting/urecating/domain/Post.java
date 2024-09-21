@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@NoArgsConstructor
 public class Post extends BaseEntity {
 
     @Id
@@ -44,6 +43,16 @@ public class Post extends BaseEntity {
 
     @Column(nullable = false)
     private boolean status;
+
+    private static final String DEFAULT_IMAGE_URL = "https://urecating.s3.ap-northeast-2.amazonaws.com/uting_logo.png";
+
+    public Post() {
+        this.image = DEFAULT_IMAGE_URL;
+    }
+
+    public String getImage() {
+        return (image == null || image.isEmpty()) ? DEFAULT_IMAGE_URL : image;
+    }
 
     public Post(SiteUser user, String title, String content, String image, Category category, LocalDateTime meetingDate, String place, int maxCapacity, boolean status) {
         this.user = user;

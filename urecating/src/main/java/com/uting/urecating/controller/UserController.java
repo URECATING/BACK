@@ -7,6 +7,7 @@ import com.uting.urecating.config.response.ResponseCode;
 import com.uting.urecating.domain.SiteUser;
 import com.uting.urecating.dto.UserJoinDto;
 import com.uting.urecating.dto.UserLoginDto;
+import com.uting.urecating.dto.UserMypageDto;
 import com.uting.urecating.dto.UserUpdateDto;
 import com.uting.urecating.jwt.TokenProvider;
 import com.uting.urecating.s3.S3Service;
@@ -109,10 +110,40 @@ public class UserController {
         }
 
         // 유저 정보 업데이트
-        SiteUser updatedUser = userService.updateUser(userLogin, user.getPassword(), user.getPhone(), imageUrl);
+        SiteUser updatedUser = userService.updateUser(userLogin, user.getPassword(), imageUrl);
 
         // 성공 메시지 및 업데이트된 유저 정보 반환
         ApiResponse<SiteUser> response = new ApiResponse(ResponseCode.SUCCESS_UPDATE_MYPAGE, updatedUser);
         return ResponseEntity.status(response.getStatus()).body(response);
+    }
+
+    //현재 사용자 마이페이지 조회
+    @GetMapping("/mypage")
+    public ResponseEntity<ApiResponse<UserMypageDto>> getMyPage(
+            @RequestHeader(value = "Authorization", required = false) String tokenInfo) {
+
+        try {
+            // JWT 토큰에서 로그인 ID 추출
+            String userLogin = tokenProvider.getUserLoginToken(tokenInfo);
+
+            // 로그인 ID로 사용자 정보 조회
+            SiteUser user = userService.findByLogin(userLogin);
+
+            // DTO로 변환
+            UserMypageDto userMypageDto = new UserMypageDto();
+            userMypageDto.setLogin(user.getLogin());
+            userMypageDto.setUserName(user.getUserName());
+            userMypageDto.setImage(user.getImage());
+            userMypageDto.setPhone(user.getPhone());
+            userMypageDto.setTeam(user.getTeam());
+            userMypageDto.setGender(user.getGender());
+
+            // 성공 메시지 및 사용자 정보 반환
+            ApiResponse<UserMypageDto> response = new ApiResponse<>(ResponseCode.SUCCESS_SEARCH_MYPAGE, userMypageDto);
+            return ResponseEntity.status(response.getStatus()).body(response);
+
+        } catch (IllegalArgumentException e) {
+            throw new ApiException(ErrorCode.SEARCH_ERROR);
+        }
     }
 }

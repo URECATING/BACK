@@ -12,11 +12,10 @@ import java.util.Set;
 
 @Entity
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Table(name="user")
-public class SiteUser extends BaseEntity{
+public class SiteUser extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
@@ -31,8 +30,8 @@ public class SiteUser extends BaseEntity{
     @Column(name = "user_name", nullable = false)
     private String userName; //이름
 
-    @Column(name="user_image", columnDefinition = "TEXT")
-    private String image; //이미지url
+    @Column(name = "user_image", columnDefinition = "TEXT")
+    private String image; // 사용자 이미지 URL
 
     @Column(nullable = false)
     private String phone; //전화번호
@@ -42,6 +41,17 @@ public class SiteUser extends BaseEntity{
 
     @Column(nullable = false)
     private String gender; //회원 성별
+
+    private static final String DEFAULT_IMAGE_URL = "https://urecating.s3.ap-northeast-2.amazonaws.com/urecating_profile_default.jpg";
+
+    // 기본 생성자에서 기본 이미지 URL 설정
+    public SiteUser() {
+        this.image = DEFAULT_IMAGE_URL;
+    }
+
+    public String getImage() {
+        return (image == null || image.isEmpty()) ? DEFAULT_IMAGE_URL : image;
+    }
 
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Arrays.asList(new SimpleGrantedAuthority("USER")); // 예시

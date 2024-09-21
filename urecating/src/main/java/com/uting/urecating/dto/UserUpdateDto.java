@@ -8,6 +8,5 @@ import org.springframework.web.multipart.MultipartFile;
 @Setter
 public class UserUpdateDto {
     private String password;
-    private String phone;
     private MultipartFile image;  // 파일 업로드를 위한 필드
 }

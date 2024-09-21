@@ -9,10 +9,10 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
-    List<Post> findAllByUserId(Long userId);
+    Optional<List<Post>> findAllByUserId(Long userId);
 
     Optional<Post> findById(Long Id);
 
-    List<Post> findAllByUserId(Long userId, Sort sort);
-    List<Post> findAllByCategory(Category category, Sort sort);
+    Optional<List<Post>> findAllByUserId(Long userId, Sort sort);
+    Optional<List<Post>> findAllByCategory(Category category, Sort sort);
 }
