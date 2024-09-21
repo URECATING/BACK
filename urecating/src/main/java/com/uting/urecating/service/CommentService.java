@@ -1,6 +1,7 @@
 package com.uting.urecating.service;
 
 
+import com.uting.urecating.config.exception.PostNotFoundException;
 import com.uting.urecating.domain.Comment;
 import com.uting.urecating.domain.Post;
 import com.uting.urecating.domain.SiteUser;
@@ -96,7 +97,16 @@ public class CommentService {
         Comment target = commentRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException());
         commentRepository.delete(target);
-        return CommentDto.createCommentDto(target, target.getUser(), target.getPost());}
+        return CommentDto.createCommentDto(target, target.getUser(), target.getPost());
+    }
+
+    @Transactional(readOnly = true)
+    public long getCommentCountByPostId(Long postId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new PostNotFoundException("No post found with id: " + postId));
+
+        return commentRepository.countByPost(post);
+    }
 }
 
 

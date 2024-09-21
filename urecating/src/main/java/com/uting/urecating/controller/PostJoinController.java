@@ -75,14 +75,22 @@ public class PostJoinController {
         }
     }
 
-    @DeleteMapping("/{joinId}")
-    public ResponseEntity<ApiResponse<Void>> deleteJoinById(@PathVariable Long joinId) {
+    @DeleteMapping("/{postId}")
+    public ResponseEntity<ApiResponse<Void>> deleteJoinByPostId(@PathVariable Long postId) {
         try {
-            postJoinService.deleteJoinById(joinId);
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String login = authentication.getName();  // 로그인된 사용자의 아이디 (login 필드)
+
+            SiteUser user = userService.findByLogin(login);
+            postJoinService.deleteJoinByPostId(user.getId(), postId);
             ApiResponse<Void> response = new ApiResponse<>(ResponseCode.SUCCESS_DELETE_JOIN_POST, null);
             return ResponseEntity.status(response.getStatus()).body(response);
-        } catch (IllegalArgumentException e) {
+        }catch (UserNotFoundException e) {
             throw new ApiException(ErrorCode.POST_JOIN_DELETE_USER_ERROR);
+        } catch (PostNotFoundException e) {
+            throw new ApiException(ErrorCode.POST_JOIN_DELETE_POST_ERROR); }
+        catch (IllegalArgumentException e) {
+            throw new ApiException(ErrorCode.POST_JOIN_DELETE_ERROR);
         }
     }
 
@@ -99,6 +107,20 @@ public class PostJoinController {
         catch (IllegalArgumentException e) {
                 throw new ApiException(ErrorCode.POST_JOIN_CHECK_ERROR);
             }
+    }
+    @GetMapping("/{postId}/join-count")
+    public ResponseEntity<ApiResponse<Long>> getCountPostJoin(@PathVariable Long postId) {
+        try {
+        long count = postJoinService.getCountPostJoin(postId);
+            ApiResponse<Long> response = new ApiResponse<>(ResponseCode.SUCCESS_COUNT_JOIN_POST, count);
+            return ResponseEntity.status(response.getStatus()).body(response);
+    }
+        catch (PostNotFoundException e){
+        throw new ApiException(ErrorCode.POST_JOIN_COUNT_POST_ERROR);
+    }
+        catch (IllegalArgumentException e) {
+        throw new ApiException(ErrorCode.POST_JOIN_COUNT_ERROR);
+    }
     }
 
 

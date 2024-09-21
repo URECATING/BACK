@@ -65,9 +65,16 @@ public class PostJoinService {
     }
 
     @Transactional
-    public void deleteJoinById(Long joinId) {
-        PostJoin postJoin = postJoinRepository.findById(joinId)
-                .orElseThrow(() -> new IllegalArgumentException("참가 정보를 찾을 수 없습니다."));
+    public void deleteJoinByPostId(Long userId, Long postId) {
+        SiteUser user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("No user found with id: " + userId));
+
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new PostNotFoundException("No post found with id: " + postId));
+
+        PostJoin postJoin = postJoinRepository.findByUserAndPost(user, post)
+                .orElseThrow(() -> new IllegalArgumentException("No join found for userId: " + userId + " and postId: " + postId));
+
         postJoinRepository.delete(postJoin);
     }
 
@@ -86,6 +93,13 @@ public class PostJoinService {
                 .orElseThrow(() -> new PostNotFoundException("No post found with id: " + postId));
 
         return postJoinRepository.existsByUserAndPost(user, post);
+    }
+
+    @Transactional(readOnly = true)
+    public long getCountPostJoin(Long postId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new PostNotFoundException("No post found with id: " + postId));
+        return postJoinRepository.countByPost(post);
     }
 
 
