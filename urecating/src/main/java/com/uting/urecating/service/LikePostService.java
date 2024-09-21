@@ -5,6 +5,8 @@ import com.uting.urecating.config.exception.UserNotFoundException;
 import com.uting.urecating.domain.LikePost;
 import com.uting.urecating.domain.Post;
 import com.uting.urecating.domain.SiteUser;
+import com.uting.urecating.dto.LikePostDto;
+import com.uting.urecating.jwt.TokenProvider;
 import com.uting.urecating.repository.LikePostRepository;
 import com.uting.urecating.repository.PostRepository;
 import com.uting.urecating.repository.UserRepository;
@@ -13,11 +15,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class LikePostService {
     private final LikePostRepository likePostRepository;
+    private final TokenProvider tokenProvider;
     private final PostRepository postRepository;
     private final UserRepository userRepository;
 
@@ -61,11 +65,13 @@ public class LikePostService {
     }
 
     @Transactional(readOnly = true)
-    public List<LikePost> getLikesByUser(Long userId) {
-        SiteUser user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("No user found with id: " + userId));
+    public List<LikePostDto> getLikesByUser(String tokenInfo) {
+        String userLogin = tokenProvider.getUserLoginToken(tokenInfo);
+        SiteUser user = userRepository.findByLogin(userLogin).orElseThrow(()  -> new UserNotFoundException("No user found with id"));
 
-        return likePostRepository.findByUser(user);
+        return likePostRepository.findByUser(user).stream()
+                .map(likePost -> new LikePostDto(likePost.getId(), likePost.getUser().getId(), likePost.getPost().getId()))
+                .collect(Collectors.toList());
     }
 
 

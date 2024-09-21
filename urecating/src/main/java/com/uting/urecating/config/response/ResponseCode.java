@@ -17,6 +17,7 @@ public enum ResponseCode {
     SUCCESS_JOIN_POST(200, 210, "참가 성공", "정상처리"),
     SUCCESS_SEARCH_JOIN_POST(200, 211, "참가 목록 검색 성공", "정상처리"),
     SUCCESS_DELETE_JOIN_POST(200, 211, "참가 삭제 성공", "정상처리"),
+    SUCCESS_CHECK_JOIN_POST(200, 211, "참가 확인 성공", "정상처리"),
     SUCCESS_LIKE_POST(200, 211, "좋아요 성공", "정상처리"),
     SUCCESS_DELETE_LIKE_POST(200, 211, "좋아요 삭제 성공", "정상처리"),
     SUCCESS_CHECK_LIKE_POST(200, 211, "좋아요 확인 성공", "정상처리"),

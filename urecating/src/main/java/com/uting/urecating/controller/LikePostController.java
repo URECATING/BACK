@@ -10,6 +10,7 @@ import com.uting.urecating.config.response.ResponseCode;
 import com.uting.urecating.domain.LikePost;
 import com.uting.urecating.domain.SiteUser;
 import com.uting.urecating.dto.LikePostDto;
+import com.uting.urecating.dto.PostJoinDto;
 import com.uting.urecating.service.LikePostService;
 import com.uting.urecating.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -91,23 +92,12 @@ public class LikePostController {
     }
 
     @GetMapping("/user/likes")
-    public ResponseEntity<ApiResponse<List<LikePostDto>>> getLikesByUser() {
+    public ResponseEntity<ApiResponse<List<LikePostDto>>> getLikesByUser(@RequestHeader(value = "Authorization", required = false) String tokenInfo) {
         try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String login = authentication.getName();  // 로그인된 사용자의 아이디 (login 필드)
 
-            SiteUser user = userService.findByLogin(login);
+            List<LikePostDto> joins = likePostService.getLikesByUser(tokenInfo);
+            ApiResponse<List<LikePostDto>> response = new ApiResponse<>(ResponseCode.SUCCESS_SEARCH_LIKE_POST, joins);
 
-            List<LikePost> likedPosts = likePostService.getLikesByUser(user.getId());
-            List<LikePostDto> likedPostDtos = likedPosts.stream()
-                    .map(likePost -> new LikePostDto(
-                            likePost.getId(),                   // ID of the LikePost
-                            likePost.getUser().getId(),        // User ID who liked the post
-                            likePost.getPost().getId()
-                    ))
-                    .collect(Collectors.toList());
-
-            ApiResponse<List<LikePostDto>> response = new ApiResponse<>(ResponseCode.SUCCESS_SEARCH_LIKE_POST, likedPostDtos);
             return ResponseEntity.status(response.getStatus()).body(response);
         } catch (UserNotFoundException e) {
             throw new ApiException(ErrorCode.LIKE_POST_USER_SEARCH_ERROR);
