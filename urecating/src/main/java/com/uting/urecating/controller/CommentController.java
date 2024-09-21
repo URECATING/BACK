@@ -3,6 +3,7 @@ package com.uting.urecating.controller;
 
 import com.uting.urecating.config.exception.ApiException;
 import com.uting.urecating.config.exception.ErrorCode;
+import com.uting.urecating.config.exception.PostNotFoundException;
 import com.uting.urecating.config.response.ApiResponse;
 import com.uting.urecating.config.response.ResponseCode;
 import com.uting.urecating.domain.SiteUser;
@@ -93,6 +94,19 @@ public class CommentController {
         }
         catch (IllegalArgumentException e){
             throw new ApiException(ErrorCode.COMMENT_DELETE_ERROR);
+        }
+    }
+    @GetMapping("/{postId}/comment-count")
+    public ResponseEntity<ApiResponse<Long>> getCommentCount(@PathVariable Long postId) {
+        try {
+        long count = commentService.getCommentCountByPostId(postId);
+        ApiResponse<Long> response = new ApiResponse<>(ResponseCode.SUCCESS_COUNT_COMMENT, count);
+        return ResponseEntity.status(response.getStatus()).body(response);
+        }
+        catch (PostNotFoundException e){
+            throw new ApiException(ErrorCode.COMMENT_COUNT_POST_ERROR);
+        }catch (IllegalArgumentException e){
+            throw new ApiException(ErrorCode.COMMENT_COUNT_ERROR);
         }
     }
 }
