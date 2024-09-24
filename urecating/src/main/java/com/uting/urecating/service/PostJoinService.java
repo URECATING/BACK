@@ -36,11 +36,28 @@ public class PostJoinService {
         SiteUser user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("No user found with id: " + userId));
 
-        if (postJoinRepository.existsByUserAndPost(user, post)) {
-            throw new IllegalArgumentException("User has already joined this post.");
+        if (post.getUser().getId().equals(userId)) {
+            throw new IllegalArgumentException("작성자는 자신의 게시물에 참여할 수 없습니다.");
         }
+
+        if (postJoinRepository.existsByUserAndPost(user, post)) {
+            throw new IllegalArgumentException("이미 참가를 했습니다.");
+        }
+
+        long postJoinCount = postJoinRepository.countByPost(post);
+
+        if (postJoinCount + 1 >= post.getMaxCapacity()) {
+            throw new IllegalArgumentException("마감되었습니다.");
+        }
+
         PostJoin postJoin = new PostJoin(user, post);
         postJoinRepository.save(postJoin);
+
+        // Update the post's status if the max number of participants is reached
+        if (postJoinCount + 1 >= post.getMaxCapacity()) {
+            post.setStatus(false);
+            postRepository.save(post);
+        }
     }
 
     @Transactional(readOnly = true)
@@ -76,6 +93,12 @@ public class PostJoinService {
                 .orElseThrow(() -> new IllegalArgumentException("No join found for userId: " + userId + " and postId: " + postId));
 
         postJoinRepository.delete(postJoin);
+
+        long participantCount = postJoinRepository.countByPost(post);
+        if (participantCount < post.getMaxCapacity()) {
+            post.setStatus(true);
+            postRepository.save(post);
+        }
     }
 
     @Transactional(readOnly = true)
@@ -101,8 +124,5 @@ public class PostJoinService {
                 .orElseThrow(() -> new PostNotFoundException("No post found with id: " + postId));
         return postJoinRepository.countByPost(post);
     }
-
-
-
 
 }
