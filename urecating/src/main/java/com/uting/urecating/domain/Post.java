@@ -4,6 +4,7 @@ import com.uting.urecating.dto.PostRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
@@ -41,6 +42,7 @@ public class Post extends BaseEntity {
     @Column(nullable = false)
     private int maxCapacity;
 
+    @Setter
     @Column(nullable = false)
     private boolean status;
 
@@ -75,4 +77,5 @@ public class Post extends BaseEntity {
         this.place = p.place();
         this.maxCapacity = p.maxCapacity();
     }
+
 }

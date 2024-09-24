@@ -14,5 +14,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     Optional<Post> findById(Long Id);
 
     Optional<List<Post>> findAllByUserId(Long userId, Sort sort);
-    Optional<List<Post>> findAllByCategory(Category category, Sort sort);
+    Optional<List<Post>> findAllByStatusTrue(Sort sort);
+    Optional<List<Post>> findAllByCategoryAndStatusTrue(Category category, Sort sort);
 }

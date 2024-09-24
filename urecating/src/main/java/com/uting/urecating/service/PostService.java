@@ -34,7 +34,7 @@ public class PostService {
     public List<PostDetailDto> getPosts() {
 //        Sort sort = Sort.by(postSortDto.sort(), postSortDto.order());
         Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
-        List<Post> postList = postRepository.findAll(sort);
+        List<Post> postList = postRepository.findAllByStatusTrue(sort).orElseThrow(() -> new IllegalArgumentException());
         List<PostDetailDto> postDetailDtoList = postList.stream().map(p -> PostDetailDto.fromPost(p)).collect(Collectors.toList());
 
         return postDetailDtoList;
@@ -114,7 +114,7 @@ public class PostService {
 //        Sort sort = Sort.by(postSortDto.sort(), postSortDto.order());
 
         Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
-        List<Post> postList = postRepository.findAllByCategory(category, sort).orElseThrow(() -> new IllegalArgumentException("게시글 조회 실패"));
+        List<Post> postList = postRepository.findAllByCategoryAndStatusTrue(category, sort).orElseThrow(() -> new IllegalArgumentException("게시글 조회 실패"));
         List<PostDetailDto> postDetailDtoList = postList.stream().map(p -> PostDetailDto.fromPost(p)).collect(Collectors.toList());
 
         return postDetailDtoList;
