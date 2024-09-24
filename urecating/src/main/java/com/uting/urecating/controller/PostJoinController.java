@@ -1,13 +1,10 @@
 package com.uting.urecating.controller;
 
-import com.uting.urecating.config.exception.ApiException;
-import com.uting.urecating.config.exception.ErrorCode;
+import com.uting.urecating.config.exception.*;
 import com.uting.urecating.config.response.ApiResponse;
 import com.uting.urecating.config.response.ResponseCode;
 import com.uting.urecating.domain.SiteUser;
 import com.uting.urecating.dto.PostJoinDto;
-import com.uting.urecating.config.exception.PostNotFoundException;
-import com.uting.urecating.config.exception.UserNotFoundException;
 import com.uting.urecating.dto.PostJoinFieldDto;
 import com.uting.urecating.service.PostJoinService;
 import com.uting.urecating.service.UserService;
@@ -45,6 +42,8 @@ public class PostJoinController {
             throw new ApiException(ErrorCode.POST_JOIN_USER_ERROR);
         } catch (PostNotFoundException e) {
             throw new ApiException(ErrorCode.POST_JOIN_POST_ERROR);
+        } catch (MaxJoinException e) {
+            throw new ApiException(ErrorCode.POST_JOIN_MAX_ERROR);
         }catch (IllegalArgumentException e ){
             throw new ApiException(ErrorCode.POST_JOIN_DOUBLE_ERROR);
         }

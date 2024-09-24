@@ -38,6 +38,7 @@ public enum ErrorCode {
 	POST_JOIN_CHECK_ERROR(400, "참가 삭제 실패, 참가 정보를 찾을 수 없습니다.", 425),
 	POST_JOIN_COUNT_POST_ERROR(400, "참가 수 반환 실패, 게시물을 찾을 수 없습니다.", 425),
 	POST_JOIN_COUNT_ERROR(400, "참가 수 반환 실패.", 425),
+	POST_JOIN_MAX_ERROR(400, "참가 인원이 마감되었습니다.", 425),
 	LIKE_POST_POST_ERROR(400, "좋아요 실패, 게시물을 찾을 수 없습니다.", 423),
 	LIKE_POST_USER_ERROR(400, "좋아요 실패, 사용자를 찾을 수 없습니다.", 424),
 	LIKE_POST_DOUBLE_ERROR(400, "좋아요 실패. 중복 참여 불가능합니다", 422),
