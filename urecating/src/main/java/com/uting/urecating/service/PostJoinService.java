@@ -1,6 +1,7 @@
 package com.uting.urecating.service;
 
 
+import com.uting.urecating.config.exception.MaxJoinException;
 import com.uting.urecating.domain.Post;
 import com.uting.urecating.domain.SiteUser;
 import com.uting.urecating.domain.PostJoin;
@@ -28,9 +29,8 @@ public class PostJoinService {
     private final UserRepository userRepository;
 
     @Transactional
-
     public void postJoin(Long userId, Long postId) {
-        Post post = postRepository.findById(postId)
+        Post post = postRepository.findByIdWithLock(postId)
                 .orElseThrow(() -> new PostNotFoundException("No post found with id: " + postId));
 
         SiteUser user = userRepository.findById(userId)
@@ -46,8 +46,8 @@ public class PostJoinService {
 
         long postJoinCount = postJoinRepository.countByPost(post);
 
-        if (postJoinCount + 1 >= post.getMaxCapacity()) {
-            throw new IllegalArgumentException("마감되었습니다.");
+        if (postJoinCount >=  post.getMaxCapacity()) {
+            throw new MaxJoinException("마감되었습니다.");
         }
 
         PostJoin postJoin = new PostJoin(user, post);
