@@ -88,7 +88,9 @@ public class PostJoinService {
 
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException("No post found with id: " + postId));
-
+        if (post.getUser().getId().equals(userId)) {
+            throw new IllegalArgumentException("작성자는 이 게시글에서 참가 취소할 수 없습니다.");
+        }
         PostJoin postJoin = postJoinRepository.findByUserAndPost(user, post)
                 .orElseThrow(() -> new IllegalArgumentException("No join found for userId: " + userId + " and postId: " + postId));
 
