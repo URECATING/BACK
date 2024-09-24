@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -55,6 +57,8 @@ public class Post extends BaseEntity {
     public String getImage() {
         return (image == null || image.isEmpty()) ? DEFAULT_IMAGE_URL : image;
     }
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PostJoin> postJoins = new ArrayList<>();
 
     public Post(SiteUser user, String title, String content, String image, Category category, LocalDateTime meetingDate, String place, int maxCapacity, boolean status) {
         this.user = user;
