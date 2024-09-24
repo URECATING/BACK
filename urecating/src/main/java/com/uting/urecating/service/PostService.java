@@ -2,11 +2,13 @@ package com.uting.urecating.service;
 
 import com.uting.urecating.domain.Category;
 import com.uting.urecating.domain.Post;
+import com.uting.urecating.domain.PostJoin;
 import com.uting.urecating.domain.SiteUser;
 import com.uting.urecating.dto.PostSortDto;
 import com.uting.urecating.dto.PostRequestDto;
 import com.uting.urecating.dto.PostDetailDto;
 import com.uting.urecating.jwt.TokenProvider;
+import com.uting.urecating.repository.PostJoinRepository;
 import com.uting.urecating.repository.PostRepository;
 import com.uting.urecating.repository.UserRepository;
 import com.uting.urecating.s3.S3Service;
@@ -27,6 +29,7 @@ import java.util.stream.Collectors;
 public class PostService {
 
     private final PostRepository postRepository;
+    private final PostJoinRepository postJoinRepository;
     private final TokenProvider tokenProvider;
     private final UserRepository userRepository;
     private final S3Service s3Service;
@@ -72,6 +75,9 @@ public class PostService {
 
         postRepository.save(post);
         PostDetailDto postDetailDto = PostDetailDto.fromPost(post);
+
+        PostJoin postJoin = new PostJoin(user, post);
+        postJoinRepository.save(postJoin);
         return postDetailDto;
     }
 
